@@ -19,6 +19,7 @@ before(async () => {
 
 describe("Inbox", () => {
     it('deploys a contract', () => {
-        console.log(inbox);
+        // after we deploy the contract to the test network, this address property will contain the address of wherever this cnotract is deployed to.
+        assert.ok(inbox.options.address); // if it's null or undefined then this test will fail
     });
 })
