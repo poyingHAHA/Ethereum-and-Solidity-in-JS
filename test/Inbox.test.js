@@ -6,6 +6,8 @@ const {interface, bytecode} = require("../compile");
 
 let accounts;
 let inbox;
+const INITIAL_STRING = "Hi there!";
+
 before(async () => {
     // Get a list of all accounts
     // Every function we call with web3 is asynchronous in nature which means it's going to return Promise
@@ -13,7 +15,7 @@ before(async () => {
     
     // Use one of those accounts to deploy the contract
     inbox = await new web3.eth.Contract(JSON.parse(interface))
-        .deploy({data: bytecode, arguments: ["Hi there!"]})
+        .deploy({data: bytecode, arguments: [INITIAL_STRING]})
         .send({from: accounts[0], gas: '1000000' })
 });
 
@@ -21,5 +23,12 @@ describe("Inbox", () => {
     it('deploys a contract', () => {
         // after we deploy the contract to the test network, this address property will contain the address of wherever this cnotract is deployed to.
         assert.ok(inbox.options.address); // if it's null or undefined then this test will fail
+    });
+
+    it('has a default message', async () => {
+        // The second set of parentheses are used to customize the transaction that we are attempting to send out to the network
+        // we might pass in an object that specifies exactly who is going to pay for this transaction and how much gas to use.
+        const message = await inbox.methods.message().call();
+        assert.equal(message, INITIAL_STRING)
     });
 })
